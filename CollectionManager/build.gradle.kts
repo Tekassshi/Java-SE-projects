@@ -21,7 +21,7 @@ tasks.getByName<Test>("test") {
 }
 
 application {
-    mainClass.set("app/Main")
+    mainClass.set("Main")
 }
 
 tasks.named<JavaExec>("run") {

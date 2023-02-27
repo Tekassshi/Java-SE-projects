@@ -1,6 +1,4 @@
-package app;
-
-import app.managers.ClientManager;
+import managers.ClientManager;
 
 import java.io.IOException;
 

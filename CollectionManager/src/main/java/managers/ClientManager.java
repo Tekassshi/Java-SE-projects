@@ -1,8 +1,8 @@
-package app.managers;
+package managers;
 
-import app.commands.Add;
-import app.commands.Command;
-import app.commands.Help;
+import commands.Add;
+import commands.Command;
+import commands.Help;
 
 import java.io.BufferedReader;
 import java.io.IOException;

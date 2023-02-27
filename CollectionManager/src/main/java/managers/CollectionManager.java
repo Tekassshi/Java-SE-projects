@@ -1,6 +1,6 @@
-package app.managers;
+package managers;
 
-import app.data.Person;
+import data.Person;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayDeque;
@@ -63,5 +63,20 @@ public class CollectionManager {
 
         // Height
         person.setHeight(InputManager.readHeight());
+
+        // Weight
+        person.setWeight(InputManager.readWeight());
+
+        // Eye color
+        person.setEyeColor(InputManager.readEyeColor());
+
+        // Nationality
+        person.setNationality(InputManager.readNationality());
+
+        // Location
+        person.setLocation(InputManager.readLocation());
+
+        collection.add(person);
+        System.out.println(ANSI_GREEN + "Person was added successfully!\n");
     }
 }

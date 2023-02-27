@@ -1,4 +1,4 @@
-package app.data;
+package data;
 
 public class Coordinates {
     private int x;

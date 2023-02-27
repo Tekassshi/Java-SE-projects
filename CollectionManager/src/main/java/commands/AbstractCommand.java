@@ -1,6 +1,6 @@
-package app.commands;
+package commands;
 
-import app.managers.CollectionManager;
+import managers.CollectionManager;
 
 public abstract class AbstractCommand {
     CollectionManager collectionManager;
