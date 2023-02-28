@@ -10,6 +10,6 @@ public class Add extends AbstractCommand implements Command{
 
     @Override
     public void execute() {
-        super.collectionManager.add();
+        super.getCollectionManager().add();
     }
 }

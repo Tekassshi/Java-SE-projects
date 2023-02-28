@@ -10,6 +10,6 @@ public class Help extends AbstractCommand implements Command{
 
     @Override
     public void execute() {
-        super.collectionManager.help();
+        super.getCollectionManager().help();
     }
 }

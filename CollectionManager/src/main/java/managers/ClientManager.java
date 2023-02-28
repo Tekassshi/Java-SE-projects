@@ -1,8 +1,6 @@
 package managers;
 
-import commands.Add;
-import commands.Command;
-import commands.Help;
+import commands.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,19 +43,39 @@ public class ClientManager {
                 case "info":
 
                     break;
-                case "show":
 
+                case "show":
+                    Command show = new Show(collectionManager);
+                    show.execute();
                     break;
+
                 case "add":
                     Command add = new Add(collectionManager);
                     add.execute();
                     break;
-                case "update_id":
 
+                case "update":
+                    if (values.length < 2) {
+                        System.out.println(ANSI_RED + "\nYou should input id argument" + ANSI_RESET);
+                        System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
+                    }
+                    else {
+                        Command update_id = new UpdateId(collectionManager, InputManager.readId(values[1]));
+                        update_id.execute();
+                    }
                     break;
+
                 case "remove_by_id":
-
+                    if (values.length < 2) {
+                        System.out.println(ANSI_RED + "\nYou should input id argument" + ANSI_RESET);
+                        System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
+                    }
+                    else {
+                        Command remove_by_id = new RemoveById(collectionManager, InputManager.readId(values[1]));
+                        remove_by_id.execute();
+                    }
                     break;
+
                 case "clear":
 
                     break;

@@ -169,4 +169,29 @@ public class InputManager {
             }
         }
     }
+
+    public static int readId(String id){
+        int out = 0;
+        int f = 0;
+        while (true){
+            try {
+                if (f == 1) {
+                    System.out.print("Enter id value: ");
+                    id = reader.readLine();
+                }
+                out = Integer.parseInt(id);
+
+                if (out <= 0)
+                    throw new NumberFormatException();
+
+                return out;
+            }
+            catch (IOException | NumberFormatException e){
+                System.out.println(ANSI_RED + "\nWrong id value!\n(Id should be > 0 and contain " +
+                        "only digits)" + ANSI_RESET);
+                System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
+                f = 1;
+            }
+        }
+    }
 }
