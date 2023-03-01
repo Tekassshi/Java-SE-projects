@@ -1,20 +1,12 @@
 package managers;
 
-import commands.*;
+import Factories.CommandFactory;
+import Interfaces.Command;
+import Interfaces.CommandWithArg;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-/**
- *
- * Мы должны создать объект команды, в котором будут находиться все инструкции для выполнения,
- * и передать его серверу.
- *
- * ??? Создать класс CollectionManager на клиенте с пустыми методами, а когда передаём на сервер,
- * аналогичный класс содержит реализацию этих методов ???
- *
- */
 
 public class ClientManager {
     private final String GREEN_BOLD = "\033[1;32m";
@@ -25,94 +17,41 @@ public class ClientManager {
         System.out.println(GREEN_BOLD + "\n--- Welcome to collection manager! ---\n" + ANSI_RESET);
         System.out.println("(type \"help\" - to get reference, \"exit\" - to terminate)\n");
 
-        CollectionManager collectionManager = new CollectionManager();
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(isr);
 
         while (true){
             System.out.print(GREEN_BOLD + ">>> " + ANSI_RESET);
             String[] values = reader.readLine().split(" ");
-            int is_exit = 0;
 
-            switch (values[0]){
-                case "help":
-                    Command help = new Help(collectionManager);
-                    help.execute();
-                    break;
-
-                case "info":
-
-                    break;
-
-                case "show":
-                    Command show = new Show(collectionManager);
-                    show.execute();
-                    break;
-
-                case "add":
-                    Command add = new Add(collectionManager);
-                    add.execute();
-                    break;
-
-                case "update":
-                    if (values.length < 2) {
-                        System.out.println(ANSI_RED + "\nYou should input id argument" + ANSI_RESET);
-                        System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
-                    }
-                    else {
-                        Command update_id = new UpdateId(collectionManager, InputManager.readId(values[1]));
-                        update_id.execute();
-                    }
-                    break;
-
-                case "remove_by_id":
-                    if (values.length < 2) {
-                        System.out.println(ANSI_RED + "\nYou should input id argument" + ANSI_RESET);
-                        System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
-                    }
-                    else {
-                        Command remove_by_id = new RemoveById(collectionManager, InputManager.readId(values[1]));
-                        remove_by_id.execute();
-                    }
-                    break;
-
-                case "clear":
-
-                    break;
-                case "save":
-
-                    break;
-                case "execute_script":
-
-                    break;
-                case "head":
-
-                    break;
-                case "add_if_min":
-
-                    break;
-                case "remove_greater":
-
-                    break;
-                case "remove_all_by_nationality":
-
-                    break;
-                case "filter_by_nationality":
-
-                    break;
-                case "print_field_descending_height":
-
-                    break;
-                case "exit":
-                    is_exit = 1;
-                    break;
-
-                default:
-                    System.out.println(ANSI_RED + "\nWrong command! Try again.\n" + ANSI_RESET);
-                    break;
-            }
-            if (is_exit == 1)
+            if (values[0].equals("exit"))
                 break;
+
+            try {
+                Command command = CommandFactory.getCommand(values[0]);
+                if (command == null)
+                    throw new NullPointerException();
+
+                if (CommandFactory.getCommandsWithArgs().contains(values[0])){
+                    if (values.length < 2)
+                        throw new IOException();
+
+                    CommandWithArg tmp = (CommandWithArg) command;
+                    tmp.setArg(values[1]);
+                    command = (Command) tmp;
+                }
+
+                command.execute();
+            }
+            catch (NullPointerException e){
+                System.out.println(ANSI_RED + "\nWrong command!\n" + ANSI_RESET);
+                System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
+            }
+            catch (IOException e){
+                System.out.println(ANSI_RED + "\nYou should input argument for this command!" + ANSI_RESET);
+                System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
+            }
+
         }
     }
 

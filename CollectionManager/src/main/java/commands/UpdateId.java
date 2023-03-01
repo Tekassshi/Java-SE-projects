@@ -1,17 +1,22 @@
 package commands;
 
+import Interfaces.Command;
+import Interfaces.CommandWithArg;
 import managers.CollectionManager;
+import managers.InputManager;
 
-public class UpdateId extends AbstractCommand implements Command{
-    private int update_val;
-
-    public UpdateId(CollectionManager collectionManager, int update_val) {
+public class UpdateId extends AbstractCommand implements Command, CommandWithArg {
+    public UpdateId(CollectionManager collectionManager) {
         super(collectionManager);
-        this.update_val = update_val;
+    }
+    
+    @Override
+    public void execute() {
+        super.getCollectionManager().updateId(Integer.parseInt(super.getArgument()));
     }
 
     @Override
-    public void execute() {
-        super.getCollectionManager().updateId(update_val);
+    public void setArg(String arg) {
+        super.setArgument(InputManager.readId(arg));
     }
 }

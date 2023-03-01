@@ -1,8 +1,9 @@
 package commands;
 
+import Interfaces.Command;
 import managers.CollectionManager;
 
-public class Help extends AbstractCommand implements Command{
+public class Help extends AbstractCommand implements Command {
 
     public Help(CollectionManager collectionManager) {
         super(collectionManager);

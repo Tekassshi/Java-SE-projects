@@ -170,7 +170,7 @@ public class InputManager {
         }
     }
 
-    public static int readId(String id){
+    public static String readId(String id){
         int out = 0;
         int f = 0;
         while (true){
@@ -184,7 +184,7 @@ public class InputManager {
                 if (out <= 0)
                     throw new NumberFormatException();
 
-                return out;
+                return id;
             }
             catch (IOException | NumberFormatException e){
                 System.out.println(ANSI_RED + "\nWrong id value!\n(Id should be > 0 and contain " +
