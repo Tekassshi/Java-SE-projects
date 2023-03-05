@@ -24,10 +24,12 @@ public class ClientManager {
             System.out.print(GREEN_BOLD + ">>> " + ANSI_RESET);
             String[] values = reader.readLine().split(" ");
 
-            if (values[0].equals("exit"))
-                break;
-
             try {
+                if (values.length < 1)
+                    throw new NullPointerException();
+                if (values[0].equals("exit"))
+                    break;
+
                 Command command = CommandFactory.getCommand(values[0]);
                 if (command == null)
                     throw new NullPointerException();
@@ -38,14 +40,13 @@ public class ClientManager {
 
                     CommandWithArg tmp = (CommandWithArg) command;
                     tmp.setArg(values[1]);
-                    command = (Command) tmp;
                 }
 
                 command.execute();
             }
             catch (NullPointerException e){
-                System.out.println(ANSI_RED + "\nWrong command!\n" + ANSI_RESET);
-                System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
+                System.out.println(ANSI_RED + "\nWrong command!" + ANSI_RESET);
+                System.out.println(ANSI_RED + "Try again (type \"help\" - to get reference)\n" + ANSI_RESET);
             }
             catch (IOException e){
                 System.out.println(ANSI_RED + "\nYou should input argument for this command!" + ANSI_RESET);
@@ -54,5 +55,4 @@ public class ClientManager {
 
         }
     }
-
 }

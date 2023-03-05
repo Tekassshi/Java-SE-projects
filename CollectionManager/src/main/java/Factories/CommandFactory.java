@@ -23,8 +23,8 @@ public class CommandFactory {
         commands.put("add", new Add(collectionManager));
         commands.put("update", new UpdateId(collectionManager));
         commands.put("remove_by_id", new RemoveById(collectionManager));
-//        commands.put("help", new Help(collectionManager));
-//        commands.put("help", new Help(collectionManager));
+        commands.put("clear", new Clear(collectionManager));
+        commands.put("save", new Save(collectionManager));
 //        commands.put("help", new Help(collectionManager));
 //        commands.put("help", new Help(collectionManager));
     }

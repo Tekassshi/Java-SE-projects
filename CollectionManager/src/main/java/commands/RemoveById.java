@@ -1,11 +1,10 @@
 package commands;
 
-import Interfaces.Command;
 import Interfaces.CommandWithArg;
 import managers.CollectionManager;
 import managers.InputManager;
 
-public class RemoveById extends AbstractCommand implements Command, CommandWithArg {
+public class RemoveById extends AbstractCommand implements CommandWithArg {
     public RemoveById(CollectionManager collectionManager) {
         super(collectionManager);
     }

@@ -1,7 +1,10 @@
 package data;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import java.time.ZonedDateTime;
 
+//@JacksonXmlRootElement(localName = "Person")
 public class Person {
     private long id;
     private String name;

@@ -5,7 +5,7 @@ import Interfaces.CommandWithArg;
 import managers.CollectionManager;
 import managers.InputManager;
 
-public class UpdateId extends AbstractCommand implements Command, CommandWithArg {
+public class UpdateId extends AbstractCommand implements CommandWithArg {
     public UpdateId(CollectionManager collectionManager) {
         super(collectionManager);
     }
