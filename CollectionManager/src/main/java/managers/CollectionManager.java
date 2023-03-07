@@ -3,31 +3,22 @@ package managers;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
-import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 import data.Person;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
 public class CollectionManager {
-
-    @JacksonXmlElementWrapper(localName = "Collection")
-    @JacksonXmlProperty(localName = "Collection")
-    Queue<Person> collection = new ArrayDeque();
+    private Queue<Person> collection = new ArrayDeque();
 
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -203,38 +194,58 @@ public class CollectionManager {
         System.out.println(ANSI_GREEN + "\nPerson with id = " + id + " was successfully removed!\n");
     }
 
-    public void save() {
+    public void save(){
         String collection_path = System.getenv("Lab5_collection");
+        boolean is_exist = true;
 
         if (collection.size() == 0){
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
             return;
         }
 
-        if (collection_path.equals("null")) {
-            System.out.println(ANSI_RED + "\nYou should create environmental variable \"Lab5_collection\" with " +
-                    "filepath to collection, it doesn't exist." + ANSI_RESET);
-            return;
+        File out_file;
+
+        if (collection_path == null || !Files.exists(Path.of(collection_path))) {
+            collection_path = System.getProperty("user.dir") + "\\src\\main\\resources\\Collection.xml";
+
+            try {
+                out_file = new File(collection_path);
+                out_file.createNewFile();
+            }
+            catch (IOException e){
+                System.out.println(ANSI_RED + "\nError creating new file. Try again.\n" + ANSI_RESET);
+                return;
+            }
         }
 
-        try {
-            FileOutputStream fos = new FileOutputStream(collection_path);
-            OutputStreamWriter writer = new OutputStreamWriter(fos);
+        try (FileOutputStream fos = new FileOutputStream(collection_path);
+             OutputStreamWriter writer = new OutputStreamWriter(fos)){
 
             XmlMapper mapper = new XmlMapper();
-            mapper.registerModule(new JaxbAnnotationModule());
-            mapper.registerModule(new ParameterNamesModule());
-            mapper.registerModule(new Jdk8Module());
             mapper.registerModule(new JavaTimeModule());
 
-            SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy hh:mm");
+            SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
             mapper.setDateFormat(df);
 
             mapper.getFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-            mapper.writeValue(writer, collection);
+            String out = mapper.writer().withRootName("Collection").writeValueAsString(collection);
+            writer.write(out);
+
+            System.out.println();
+            if (is_exist) {
+                System.out.println(ANSI_GREEN + "Your file has been successfully written to \"" + collection_path +
+                        "\"" + ANSI_RESET);
+            }
+            else {
+                System.out.println(ANSI_RED + "Wrong environmental variable \"Lab5_collection\" value." + ANSI_RESET);
+                System.out.println(ANSI_GREEN + "Your file has been successfully written to \"" + collection_path +
+                        "\"" + ANSI_RESET);
+            }
+            System.out.println();
         }
+
         catch (FileNotFoundException e){
             System.out.println(ANSI_RED + "\nCheck your environmental variable \"Lab5_collection\"value, " +
                     "file doesn't exist." + ANSI_RESET);

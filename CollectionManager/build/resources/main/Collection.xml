@@ -1,4 +1,4 @@
-<ArrayDeque>
+<Collection>
   <item>
     <id>1</id>
     <name>dfvndfjvdf</name>
@@ -6,7 +6,7 @@
       <x>123</x>
       <y>123</y>
     </coordinates>
-    <creationDate>1678056876.142503900</creationDate>
+    <creationDate>2023-03-07T23:03:22.572249+03:00</creationDate>
     <height>123</height>
     <weight>123.0</weight>
     <eyeColor>RED</eyeColor>
@@ -17,22 +17,4 @@
       <z>123.0</z>
     </location>
   </item>
-  <item>
-    <id>2</id>
-    <name>dfvndfjvdf</name>
-    <coordinates>
-      <x>123</x>
-      <y>123</y>
-    </coordinates>
-    <creationDate>1678056881.125857900</creationDate>
-    <height>123</height>
-    <weight>123.0</weight>
-    <eyeColor>RED</eyeColor>
-    <nationality>RUSSIA</nationality>
-    <location>
-      <x>123.0</x>
-      <y>123</y>
-      <z>123.0</z>
-    </location>
-  </item>
-</ArrayDeque>
+</Collection>
