@@ -1,6 +1,7 @@
 package data;
 
 public class Coordinates {
+
     private int x;
     private Long y;
 

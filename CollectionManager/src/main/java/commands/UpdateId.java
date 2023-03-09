@@ -1,6 +1,5 @@
 package commands;
 
-import Interfaces.Command;
 import Interfaces.CommandWithArg;
 import managers.CollectionManager;
 import managers.InputManager;

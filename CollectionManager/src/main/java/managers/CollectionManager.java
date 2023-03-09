@@ -1,11 +1,15 @@
 package managers;
 
+import Factories.CommandFactory;
+import Interfaces.Command;
+import Interfaces.CommandWithArg;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import data.Collection;
 import data.Person;
 
 import java.io.*;
@@ -18,52 +22,80 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 
 public class CollectionManager {
-    private Queue<Person> collection = new ArrayDeque();
+    private Queue<Person> collection = new ArrayDeque<>();
+    private String collection_path;
+    private boolean is_path_exist = false;
 
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_RESET = "\u001B[0m";
     private int id = 1;
 
-    public void help(){
+    public void getCollectionPath(){
+        String path = System.getenv("Lab5_collection");
+        File out_file;
+
+        if (path == null || !Files.exists(Path.of(path))) {
+            collection_path = System.getProperty("user.dir") + "\\src\\main\\resources\\Collection.xml";
+
+            try {
+                out_file = new File(collection_path);
+                out_file.createNewFile();
+
+            } catch (IOException e) {
+                System.out.println(ANSI_RED + "\nError creating new file. Try again.\n" + ANSI_RESET);
+            }
+            System.out.println(ANSI_RED + "Wrong environmental variable value, or it's doesn't exist." + ANSI_RESET);
+            System.out.println(ANSI_GREEN + "New collection was created: \"" + collection_path + "\"\n" + ANSI_RESET);
+            return;
+        }
+
+        collection_path = path;
+        is_path_exist = true;
+
+        System.out.println(ANSI_GREEN + "Path to collection was successfully loaded: \""
+                + collection_path + "\"\n" + ANSI_RESET);
+    }
+
+    public void help() {
         StringBuilder s = new StringBuilder(
                 "\"help\" - вывести справку по доступным командам\n" +
-                "\"info\" - вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, " +
+                        "\"info\" - вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, " +
                         "количество элементов и т.д.)\n" +
-                "\"show\" - вывести в стандартный поток вывода все элементы коллекции в строковом представлении\n" +
-                "\"add\" - добавить новый элемент в коллекцию\n" +
-                "\"update id\" - обновить значение элемента коллекции, id которого равен заданному\n" +
-                "\"remove_by_id id\" - удалить элемент из коллекции по его id\n" +
-                "\"clear\" - очистить коллекцию\n" +
-                "\"execute_script file_name\" - считать и исполнить скрипт из указанного файла. " +
+                        "\"show\" - вывести в стандартный поток вывода все элементы коллекции в строковом представлении\n" +
+                        "\"add\" - добавить новый элемент в коллекцию\n" +
+                        "\"update id\" - обновить значение элемента коллекции, id которого равен заданному\n" +
+                        "\"remove_by_id id\" - удалить элемент из коллекции по его id\n" +
+                        "\"clear\" - очистить коллекцию\n" +
+                        "\"execute_script file_name\" - считать и исполнить скрипт из указанного файла. " +
                         "В скрипте содержатся команды в таком же виде, " +
                         "в котором их вводит пользователь в интерактивном режиме.\n" +
-                "\"head\" - вывести первый элемент коллекции\n" +
-                "\"add_if_min\" - добавить новый элемент в коллекцию, если его значение меньше, " +
+                        "\"head\" - вывести первый элемент коллекции\n" +
+                        "\"add_if_min\" - добавить новый элемент в коллекцию, если его значение меньше, " +
                         "чем у наименьшего элемента этой коллекции\n" +
-                "\"remove_greater\" - удалить из коллекции все элементы, превышающие заданный\n" +
-                "\"remove_all_by_nationality nationality\" - удалить из коллекции все элементы, значение поля " +
+                        "\"remove_greater\" - удалить из коллекции все элементы, превышающие заданный\n" +
+                        "\"remove_all_by_nationality nationality\" - удалить из коллекции все элементы, значение поля " +
                         "nationality которого эквивалентно заданному\n" +
-                "\"filter_by_nationality nationality\" - вывести элементы, значение поля nationality которых " +
+                        "\"filter_by_nationality nationality\" - вывести элементы, значение поля nationality которых " +
                         "равно заданному\n" +
-                "\"print_field_descending_height\" - вывести значения поля " +
+                        "\"print_field_descending_height\" - вывести значения поля " +
                         "height всех элементов в порядке убывания\n" +
-                "\"save\" - сохранить коллекцию в файл\n" +
-                "\"exit\" - завершить программу (без сохранения в файл)\n");
+                        "\"save\" - сохранить коллекцию в файл\n" +
+                        "\"exit\" - завершить программу (без сохранения в файл)\n");
 
         System.out.println("\n--- Reference for all commands ---\n");
         System.out.println(s);
     }
 
-    public void show(){
-        if (collection.size() == 0){
+    public void show() {
+        if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
             return;
         }
 
         System.out.println("\n--- Collection ---\n");
 
-        for (Person person : collection){
+        for (Person person : collection) {
 
             System.out.println("Id: " + person.getId());
             System.out.println("Name: " + person.getName());
@@ -80,7 +112,7 @@ public class CollectionManager {
         }
     }
 
-    public void add(){
+    public void add() {
         System.out.println("\n--- Adding a new person to collection ---\n");
         Person person = new Person();
 
@@ -113,19 +145,19 @@ public class CollectionManager {
         person.setLocation(InputManager.readLocation());
 
         collection.add(person);
-        System.out.println(ANSI_GREEN + "Person was added successfully!\n");
+        System.out.println(ANSI_GREEN + "Person was added successfully!\n" + ANSI_RESET);
     }
 
-    public void updateId(int id){
+    public void updateId(int id) {
         int is_exist = 0;
 
-        if (collection.size() == 0){
+        if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
             return;
         }
 
-        for (Person person : collection){
-            if (person.getId() == id){
+        for (Person person : collection) {
+            if (person.getId() == id) {
                 // Name
                 person.setName(InputManager.readName());
 
@@ -153,73 +185,49 @@ public class CollectionManager {
                 break;
             }
         }
-        if (is_exist == 0){
+        if (is_exist == 0) {
             System.out.println(ANSI_RED + "\nPerson with given id value doesn't exist!" + ANSI_RESET);
             System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
-        }
-        else
+        } else
             System.out.println(ANSI_GREEN + "\nPerson with id = " + id + " was successfully updated!\n");
     }
 
-    public void removeById(int id){
+    public void removeById(int id) {
         int is_exist = 0;
 
-        if (collection.size() == 0){
+        if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
             return;
         }
 
-        for (Person person : collection){
-            if (person.getId() == id){
+        for (Person person : collection) {
+            if (person.getId() == id) {
                 collection.remove(person);
                 is_exist = 1;
                 break;
             }
         }
-        if (is_exist == 0){
+        if (is_exist == 0) {
             System.out.println(ANSI_RED + "\nPerson with given id value doesn't exist!" + ANSI_RESET);
             System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
-        }
-        else
+        } else
             System.out.println(ANSI_GREEN + "\nPerson with id = " + id + " was successfully removed!\n");
     }
 
-    public void clear(){
-        if (collection.size() == 0){
+    public void clear() {
+        if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
             return;
         }
 
         collection.removeAll(collection);
-        System.out.println(ANSI_GREEN + "\nPerson with id = " + id + " was successfully removed!\n");
+        System.out.println(ANSI_GREEN + "\nCollection was successfully cleared.\n");
     }
 
-    public void save(){
-        String collection_path = System.getenv("Lab5_collection");
-        boolean is_exist = true;
-
-        if (collection.size() == 0){
-            System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
-            return;
-        }
-
-        File out_file;
-
-        if (collection_path == null || !Files.exists(Path.of(collection_path))) {
-            collection_path = System.getProperty("user.dir") + "\\src\\main\\resources\\Collection.xml";
-
-            try {
-                out_file = new File(collection_path);
-                out_file.createNewFile();
-            }
-            catch (IOException e){
-                System.out.println(ANSI_RED + "\nError creating new file. Try again.\n" + ANSI_RESET);
-                return;
-            }
-        }
+    public void save() {
 
         try (FileOutputStream fos = new FileOutputStream(collection_path);
-             OutputStreamWriter writer = new OutputStreamWriter(fos)){
+             OutputStreamWriter writer = new OutputStreamWriter(fos)) {
 
             XmlMapper mapper = new XmlMapper();
             mapper.registerModule(new JavaTimeModule());
@@ -230,28 +238,103 @@ public class CollectionManager {
             mapper.getFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-            String out = mapper.writer().withRootName("Collection").writeValueAsString(collection);
-            writer.write(out);
+            Collection collection_wrapper = new Collection();
+            collection_wrapper.setCollection(collection);
 
-            System.out.println();
-            if (is_exist) {
-                System.out.println(ANSI_GREEN + "Your file has been successfully written to \"" + collection_path +
-                        "\"" + ANSI_RESET);
-            }
-            else {
-                System.out.println(ANSI_RED + "Wrong environmental variable \"Lab5_collection\" value." + ANSI_RESET);
-                System.out.println(ANSI_GREEN + "Your file has been successfully written to \"" + collection_path +
-                        "\"" + ANSI_RESET);
-            }
-            System.out.println();
-        }
+            mapper.writeValue(writer, collection_wrapper);
 
-        catch (FileNotFoundException e){
-            System.out.println(ANSI_RED + "\nCheck your environmental variable \"Lab5_collection\"value, " +
-                    "file doesn't exist." + ANSI_RESET);
-        }
-        catch (IOException e) {
+            System.out.println(ANSI_GREEN + "\nYour collection was successfully saved.\n" + ANSI_RESET);
+
+        } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void load() {
+        if (!is_path_exist)
+            return;
+
+        File file = new File(collection_path);
+        XmlMapper mapper = new XmlMapper();
+        mapper.registerModule(new JavaTimeModule());
+
+        Collection tmp;
+
+        try {
+            tmp = mapper.readValue(file, Collection.class);
+        }
+        catch (InvalidFormatException e){
+            System.out.println(ANSI_RED + "Wrong data type in \"" + collection_path + "\"." + ANSI_RESET);
+            System.out.println(ANSI_RED + e.getLocation().toString().replaceAll("\\[|\\]", "")
+                    + ANSI_RESET + "\n");
+            System.out.println(ANSI_GREEN + "A new empty collection has been created.\n" + ANSI_RESET);
+            tmp = new Collection();
+        }
+        catch (IOException e){
+            System.out.println(ANSI_RED + "Wrong XML format \"" + collection_path + "\"." + ANSI_RESET);
+            System.out.println(ANSI_GREEN + "A new empty collection has been created.\n" + ANSI_RESET);
+            tmp = new Collection();
+        }
+
+        collection = tmp.getCollection();
+    }
+
+    public void executeScript(String file_path){
+        System.out.println(ANSI_GREEN + "\nExecuting user script:" + ANSI_RESET);
+        if (file_path == null)
+            return;
+
+        File file = new File(file_path);
+        int line = 1;
+
+        try (FileReader fileReader = new FileReader(file);
+              BufferedReader reader = new BufferedReader(fileReader)){
+
+            String input;
+
+            while ((input = reader.readLine()) != null){
+                String[] values = input.split(" ");
+
+                if (values[0].equals("exit"))
+                    break;
+                if (values[0].equals("execute_script")){
+                    System.out.println(ANSI_RED + "Line: " + line + ANSI_RESET);
+                    System.out.println(ANSI_RED + "Command \"execute_script\" doesn't supported in current mode. " +
+                            "(Command skipped)" + ANSI_RESET);
+                    continue;
+                }
+
+                Command command = CommandFactory.getCommand(values[0]);
+
+                if (command == null) {
+                    System.out.println(ANSI_RED + "Line: " + line + ANSI_RESET);
+                    System.out.println(ANSI_RED + "Wrong command.\n" + ANSI_RESET);
+                    line++;
+                    continue;
+                }
+
+                if (CommandFactory.getCommandsWithArgs().contains(values[0])){
+                    if (values.length < 2) {
+                        System.out.println(ANSI_RED + "Line: " + line + ANSI_RESET);
+                        System.out.println(ANSI_RED + "You should input argument to this command. (Command skipped)\n"
+                                + ANSI_RESET);
+                        line++;
+                        continue;
+                    }
+
+                    CommandWithArg tmp = (CommandWithArg) command;
+                    tmp.setArg(values[1]);
+                }
+
+                command.execute();
+
+                line++;
+            }
+
+            System.out.println(ANSI_GREEN + "\nScript was successfully executed.\n" + ANSI_RESET);
+
+        } catch (IOException e){
+            e.printStackTrace();
         }
     }
 }

@@ -5,9 +5,7 @@ import data.Coordinates;
 import data.Country;
 import data.Location;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class InputManager {
     private static final String ANSI_GREEN = "\u001B[32m";
@@ -32,6 +30,21 @@ public class InputManager {
                 System.out.println(ANSI_RED + "\nWrong name format!\n(Name should contain at least 1 symbol and " +
                         "only letters supported)" + ANSI_RESET);
                 System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
+            }
+        }
+    }
+
+    public static String readName(String name){
+        while (true){
+            try {
+                name = reader.readLine();
+
+                if (!isWord(name) || name.length() == 0)
+                    throw new IOException();
+                return name;
+            }
+            catch (IOException e){
+                return null;
             }
         }
     }
@@ -70,6 +83,27 @@ public class InputManager {
         }
     }
 
+    public static Coordinates readCoordinates(String x_c, String y_c){
+        Coordinates coordinates = new Coordinates();
+
+        while (true){
+            try {
+                int x = Integer.parseInt(x_c);
+                if (x <= -783)
+                    throw new NumberFormatException();
+                coordinates.setX(x);
+
+                Long y = Long.parseLong(y_c);
+                coordinates.setY(y);
+
+                return coordinates;
+            }
+            catch (NumberFormatException e){
+                return null;
+            }
+        }
+    }
+
     public static Integer readHeight(){
         while (true){
             try {
@@ -85,6 +119,22 @@ public class InputManager {
                 System.out.println(ANSI_RED + "\nWrong height format!\n(height should be integer > 0, and " +
                         "only digits supported)" + ANSI_RESET);
                 System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
+            }
+        }
+    }
+
+    public static Integer readHeight(String h){
+        while (true){
+            try {
+                Integer height = Integer.parseInt(h);
+
+                if (height <= 0)
+                    throw new IOException();
+
+                return height;
+            }
+            catch (NumberFormatException | IOException e){
+                return null;
             }
         }
     }
@@ -109,6 +159,22 @@ public class InputManager {
         }
     }
 
+    public static Float readWeight(String w){
+        while (true){
+            try {
+                Float weight = Float.parseFloat(w.replaceAll(",", "."));
+
+                if (weight <= 0)
+                    throw new IOException();
+
+                return weight;
+            }
+            catch (NumberFormatException | IOException e){
+                return null;
+            }
+        }
+    }
+
     public static Color readEyeColor(){
         while (true){
             try {
@@ -125,6 +191,19 @@ public class InputManager {
         }
     }
 
+    public static Color readEyeColor(String c){
+        while (true){
+            try {
+                Color eye_color = Color.valueOf(c.toUpperCase());
+
+                return eye_color;
+            }
+            catch (IllegalArgumentException | NullPointerException e){
+                return null;
+            }
+        }
+    }
+
     public static Country readNationality(){
         while (true){
             try {
@@ -137,6 +216,19 @@ public class InputManager {
                 System.out.println(ANSI_RED + "\nWrong nationality value!\n(you can choose one of the values " +
                         "RUSSIA, FRANCE, THAILAND, NORTH_KOREA)" + ANSI_RESET);
                 System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
+            }
+        }
+    }
+
+    public static Country readNationality(String n){
+        while (true){
+            try {
+                Country nationality = Country.valueOf(n.toUpperCase());
+
+                return nationality;
+            }
+            catch (IllegalArgumentException | NullPointerException e){
+                return null;
             }
         }
     }
@@ -170,6 +262,28 @@ public class InputManager {
         }
     }
 
+    public static Location readLocation(String x_c, String y_c, String z_c){
+        Location location = new Location();
+
+        while (true){
+            try {
+                Float x = Float.parseFloat(x_c.replaceAll(",", "."));
+                location.setX(x);
+
+                Integer y = Integer.parseInt(y_c);
+                location.setY(y);
+
+                Double z = Double.parseDouble(z_c.replaceAll(",", "."));
+                location.setZ(z);
+
+                return location;
+            }
+            catch (NumberFormatException e){
+                return null;
+            }
+        }
+    }
+
     public static String readId(String id){
         int out = 0;
         int f = 0;
@@ -192,6 +306,41 @@ public class InputManager {
                 System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
                 f = 1;
             }
+        }
+    }
+
+    public static String parseId(String id){
+        int out = 0;
+
+        try {
+            out = Integer.parseInt(id);
+            if (out <= 0)
+                throw new NumberFormatException();
+            return id;
+        }
+        catch ( NumberFormatException e){
+            return null;
+        }
+    }
+
+    public static String readFile(String file_name) {
+        String file_dir = System.getProperty("user.dir") + "\\src\\main\\resources\\";
+        String file_path = file_dir + file_name;
+
+        File file = new File(file_path);
+
+        try {
+            FileReader fileReader = new FileReader(file);
+            BufferedReader reader = new BufferedReader(fileReader);
+
+            return file_path;
+        }
+        catch (FileNotFoundException e){
+            System.out.println(ANSI_RED + "\nFile called \"" + file_name + "\" not found in \"" + file_dir
+                    +"\"."+ ANSI_RESET);
+            System.out.println(ANSI_RED + "Your file should be located in \"" + file_dir + "\". " +
+                    "Please, create file with script in this directory and try again."+ ANSI_RESET + "\n");
+            return null;
         }
     }
 }

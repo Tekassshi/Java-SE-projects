@@ -17,6 +17,12 @@ public class ClientManager {
         System.out.println(GREEN_BOLD + "\n--- Welcome to collection manager! ---\n" + ANSI_RESET);
         System.out.println("(type \"help\" - to get reference, \"exit\" - to terminate)\n");
 
+        // Request to create collection manager and check paths
+        CollectionManager collectionManager = new CollectionManager();
+        CommandFactory.setCollectionManager(collectionManager);
+        collectionManager.getCollectionPath();
+        collectionManager.load();
+
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(isr);
 
