@@ -14,6 +14,7 @@ public class InputManager {
 
     static InputStreamReader isr = new InputStreamReader(System.in);
     static BufferedReader reader = new BufferedReader(isr);
+    static int mode = 0;
 
     public static String readName(){
         while (true){
@@ -34,19 +35,13 @@ public class InputManager {
         }
     }
 
-    public static String readName(String name){
-        while (true){
-            try {
-                name = reader.readLine();
+    public static String readNameScript(BufferedReader reader) throws IOException {
+        String name;
+        name = reader.readLine();
 
-                if (!isWord(name) || name.length() == 0)
-                    throw new IOException();
-                return name;
-            }
-            catch (IOException e){
-                return null;
-            }
-        }
+        if (!isWord(name) || name.length() == 0)
+            throw new IOException();
+        return name;
     }
 
     public static boolean isWord(String word){
@@ -83,25 +78,18 @@ public class InputManager {
         }
     }
 
-    public static Coordinates readCoordinates(String x_c, String y_c){
+    public static Coordinates readCoordinatesScript(BufferedReader reader) throws IOException, NumberFormatException {
         Coordinates coordinates = new Coordinates();
 
-        while (true){
-            try {
-                int x = Integer.parseInt(x_c);
-                if (x <= -783)
-                    throw new NumberFormatException();
-                coordinates.setX(x);
+        int x = Integer.parseInt(reader.readLine());
 
-                Long y = Long.parseLong(y_c);
-                coordinates.setY(y);
+        if (x <= -783)
+            throw new NumberFormatException();
 
-                return coordinates;
-            }
-            catch (NumberFormatException e){
-                return null;
-            }
-        }
+        coordinates.setX(x);
+        Long y = Long.parseLong(reader.readLine());
+        coordinates.setY(y);
+        return coordinates;
     }
 
     public static Integer readHeight(){
@@ -123,20 +111,11 @@ public class InputManager {
         }
     }
 
-    public static Integer readHeight(String h){
-        while (true){
-            try {
-                Integer height = Integer.parseInt(h);
-
-                if (height <= 0)
-                    throw new IOException();
-
-                return height;
-            }
-            catch (NumberFormatException | IOException e){
-                return null;
-            }
-        }
+    public static Integer readHeightScript(BufferedReader reader) throws IOException {
+        Integer height = Integer.parseInt(reader.readLine());
+        if (height <= 0)
+            throw new IOException();
+        return height;
     }
 
     public static Float readWeight(){
@@ -159,20 +138,13 @@ public class InputManager {
         }
     }
 
-    public static Float readWeight(String w){
-        while (true){
-            try {
-                Float weight = Float.parseFloat(w.replaceAll(",", "."));
+    public static Float readWeightScript(BufferedReader reader) throws IOException {
+        Float weight = Float.parseFloat(reader.readLine().replaceAll(",", "."));
 
-                if (weight <= 0)
-                    throw new IOException();
+        if (weight <= 0)
+            throw new IOException();
 
-                return weight;
-            }
-            catch (NumberFormatException | IOException e){
-                return null;
-            }
-        }
+        return weight;
     }
 
     public static Color readEyeColor(){
@@ -191,17 +163,10 @@ public class InputManager {
         }
     }
 
-    public static Color readEyeColor(String c){
-        while (true){
-            try {
-                Color eye_color = Color.valueOf(c.toUpperCase());
+    public static Color readEyeColorScript(BufferedReader reader) throws IOException {
+        Color eye_color = Color.valueOf(reader.readLine().toUpperCase());
 
-                return eye_color;
-            }
-            catch (IllegalArgumentException | NullPointerException e){
-                return null;
-            }
-        }
+        return eye_color;
     }
 
     public static Country readNationality(){
@@ -220,17 +185,9 @@ public class InputManager {
         }
     }
 
-    public static Country readNationality(String n){
-        while (true){
-            try {
-                Country nationality = Country.valueOf(n.toUpperCase());
-
-                return nationality;
-            }
-            catch (IllegalArgumentException | NullPointerException e){
-                return null;
-            }
-        }
+    public static Country readNationalityScript(BufferedReader reader) throws IOException {
+        Country nationality = Country.valueOf(reader.readLine().toUpperCase());
+        return nationality;
     }
 
     public static Location readLocation(){
@@ -262,26 +219,18 @@ public class InputManager {
         }
     }
 
-    public static Location readLocation(String x_c, String y_c, String z_c){
+    public static Location readLocationScript(BufferedReader reader) throws IOException {
         Location location = new Location();
 
-        while (true){
-            try {
-                Float x = Float.parseFloat(x_c.replaceAll(",", "."));
-                location.setX(x);
+        Float x = Float.parseFloat(reader.readLine().replaceAll(",", "."));
+        location.setX(x);
 
-                Integer y = Integer.parseInt(y_c);
-                location.setY(y);
+        Integer y = Integer.parseInt(reader.readLine());
+        location.setY(y);
 
-                Double z = Double.parseDouble(z_c.replaceAll(",", "."));
-                location.setZ(z);
-
-                return location;
-            }
-            catch (NumberFormatException e){
-                return null;
-            }
-        }
+        Double z = Double.parseDouble(reader.readLine().replaceAll(",", "."));
+        location.setZ(z);
+        return location;
     }
 
     public static String readId(String id){
@@ -306,20 +255,6 @@ public class InputManager {
                 System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
                 f = 1;
             }
-        }
-    }
-
-    public static String parseId(String id){
-        int out = 0;
-
-        try {
-            out = Integer.parseInt(id);
-            if (out <= 0)
-                throw new NumberFormatException();
-            return id;
-        }
-        catch ( NumberFormatException e){
-            return null;
         }
     }
 

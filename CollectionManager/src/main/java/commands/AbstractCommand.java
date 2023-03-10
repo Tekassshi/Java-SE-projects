@@ -1,8 +1,9 @@
 package commands;
 
+import Interfaces.Script;
 import managers.CollectionManager;
 
-public abstract class AbstractCommand {
+public abstract class AbstractCommand implements Script {
     private CollectionManager collectionManager;
     private String argument;
 
