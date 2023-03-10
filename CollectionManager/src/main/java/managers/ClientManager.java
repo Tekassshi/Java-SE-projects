@@ -7,6 +7,7 @@ import Interfaces.CommandWithArg;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.InputMismatchException;
 
 public class ClientManager {
     private final String GREEN_BOLD = "\033[1;32m";
@@ -33,8 +34,23 @@ public class ClientManager {
             try {
                 if (values.length < 1)
                     throw new NullPointerException();
-                if (values[0].equals("exit"))
-                    break;
+                if (values[0].equals("exit")) {
+                    System.out.print(ANSI_RED + "Do you want exit without saving? [yes / no]: " + ANSI_RESET);
+                    String input = reader.readLine();
+
+                    if (input == null){
+                        throw new InputMismatchException();
+                    }
+                    else if (input.equals("yes"))
+                        break;
+                    else if (input.equals("no")) {
+                        System.out.println();
+                        continue;
+                    }
+                    else {
+                        throw new InputMismatchException();
+                    }
+                }
 
                 Command command = CommandFactory.getCommand(values[0]);
                 if (command == null)
@@ -56,6 +72,10 @@ public class ClientManager {
             }
             catch (IOException e){
                 System.out.println(ANSI_RED + "\nYou should input argument for this command!" + ANSI_RESET);
+                System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
+            }
+            catch (InputMismatchException e){
+                System.out.println(ANSI_RED + "\nWrong input." + ANSI_RESET);
                 System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
             }
 

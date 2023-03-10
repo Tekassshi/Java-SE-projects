@@ -19,8 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
-import java.util.ArrayDeque;
-import java.util.Queue;
+import java.util.*;
 
 public class CollectionManager {
     private Queue<Person> collection = new ArrayDeque<>();
@@ -32,7 +31,7 @@ public class CollectionManager {
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_RESET = "\u001B[0m";
 
-    private int id = 1;
+    private Long id = Long.valueOf(1);
 
     public void getCollectionPath(){
         String path = System.getenv("Lab5_collection");
@@ -269,6 +268,7 @@ public class CollectionManager {
         }
 
         collection.removeAll(collection);
+        id = Long.valueOf(1);
         System.out.println(ANSI_GREEN + "\nCollection was successfully cleared.\n" + ANSI_RESET);
     }
 
@@ -317,14 +317,52 @@ public class CollectionManager {
                     + ANSI_RESET + "\n");
             System.out.println(ANSI_GREEN + "A new empty collection has been created.\n" + ANSI_RESET);
             tmp = new Collection();
+            collection = tmp.getCollection();
+            return;
         }
         catch (IOException e){
             System.out.println(ANSI_RED + "Wrong XML format \"" + collection_path + "\"." + ANSI_RESET);
             System.out.println(ANSI_GREEN + "A new empty collection has been created.\n" + ANSI_RESET);
             tmp = new Collection();
+            collection = tmp.getCollection();
+            return;
         }
 
         collection = tmp.getCollection();
+
+        System.out.println("\nChecking loaded collection data...\n");
+        checkId();
+        setNextId();
+    }
+
+    private void checkId(){
+        Map<Long, Integer> map = new HashMap<>();
+        Long max = Long.valueOf(0);
+        List<Person> to_delete = new LinkedList<>();
+
+        for (Person person : collection){
+            Long tmp_id = person.getId();
+            map.put(tmp_id, map.getOrDefault(tmp_id, 0) + 1);
+            max = Math.max(max, tmp_id);
+
+            if (map.get(person.getId()) > 1) {
+                System.out.println(ANSI_RED + "Person with id: " + tmp_id + " is already exists." + ANSI_RESET);
+                System.out.println(ANSI_RED + "Node will be removed.\n" + ANSI_RESET);
+                to_delete.add(person);
+            }
+        }
+
+        for (Person person: to_delete)
+            collection.remove(person);
+    }
+
+    private void setNextId(){
+        Long max = Long.valueOf(0);
+
+        for (Person person : collection){
+            max = Math.max(max, person.getId());
+        }
+        id = max + 1;
     }
 
     public void executeScript(String file_path){
@@ -384,7 +422,6 @@ public class CollectionManager {
                 }
                 line++;
             }
-
             if (is_correct != 0)
                 System.out.println(ANSI_GREEN + "\nScript was successfully executed.\n" + ANSI_RESET);
 
