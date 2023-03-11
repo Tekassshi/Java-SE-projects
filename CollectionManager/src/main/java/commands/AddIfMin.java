@@ -10,14 +10,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 
-public class Add extends AbstractCommand implements Command, AssemblableCommand {
-    public Add(CollectionManager collectionManager) {
+public class AddIfMin extends AbstractCommand implements Command, AssemblableCommand {
+    public AddIfMin(CollectionManager collectionManager) {
         super(collectionManager);
     }
 
     @Override
+    public void execute() throws IOException {
+        super.getCollectionManager().addIfMin((Person) super.getObject());
+    }
+
+    @Override
     public void buildObject() {
-        System.out.println("\n--- Adding a new person to collection ---\n");
+        System.out.println("\n--- Adding a new person to collection if min ---\n");
 
         Person person = new Person();
 
@@ -47,10 +52,5 @@ public class Add extends AbstractCommand implements Command, AssemblableCommand 
         person.setLocation(InputManager.readLocationScript(reader));
 
         super.setObject(person);
-    }
-
-    @Override
-    public void execute() throws IOException {
-        super.getCollectionManager().add((Person) super.getObject());
     }
 }

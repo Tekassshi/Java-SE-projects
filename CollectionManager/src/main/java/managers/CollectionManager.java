@@ -1,9 +1,8 @@
 package managers;
 
-import Factories.CommandFactory;
-import Interfaces.Command;
-import Interfaces.CommandWithArg;
-import Interfaces.Script;
+import comparators.DefaultComparator;
+import comparators.HeightComparator;
+import data.Country;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -22,7 +21,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 public class CollectionManager {
-    private Queue<Person> collection = new ArrayDeque<>();
+    private Deque<Person> collection = new ArrayDeque<>();
     private String collection_path;
     private boolean is_path_exist = false;
     private BufferedReader reader;
@@ -114,129 +113,67 @@ public class CollectionManager {
         }
     }
 
-    public void add(int key) throws IOException {
-        System.out.println("\n--- Adding a new person to collection ---\n");
+    public void showPerson(Person person){
+        System.out.println("\nPerson\n");
+        System.out.println("Id: " + person.getId());
+        System.out.println("Name: " + person.getName());
+        System.out.println("Coordinates: x = \"" + person.getCoordinates().getX() + "\", y = \"" +
+                person.getCoordinates().getY() + "\"");
+        System.out.println("Creation date: " + person.getCreationDate());
+        System.out.println("Height: " + person.getHeight());
+        System.out.println("Weight: " + person.getWeight());
+        System.out.println("Eye color: " + person.getEyeColor());
+        System.out.println("Nationality: " + person.getNationality());
+        System.out.println("Location: x = \"" + person.getLocation().getX() + "\", y = \"" +
+                person.getLocation().getY() + "\", z = \"" + person.getLocation().getZ() + "\"");
+        System.out.println("");
+    }
 
-        Person person = new Person();
-
-        // Id
+    public void add(Person person) throws IOException {
         person.setId(id);
-        id += 1;
-
-        // Name
-        if (key == 0)
-            person.setName(InputManager.readName());
-        else
-            person.setName(InputManager.readNameScript(reader));
-
-        // Coordinates
-        if (key == 0)
-            person.setCoordinates(InputManager.readCoordinates());
-        else
-            person.setCoordinates(InputManager.readCoordinatesScript(reader));
-
-
-        // CreationDate
-        person.setCreationDate(ZonedDateTime.now());
-
-        // Height
-        if (key == 0)
-            person.setHeight(InputManager.readHeight());
-        else
-            person.setHeight(InputManager.readHeightScript(reader));
-
-        // Weight
-        if (key == 0)
-            person.setWeight(InputManager.readWeight());
-        else
-            person.setWeight(InputManager.readWeightScript(reader));
-
-        // Eye color
-        if (key == 0)
-            person.setEyeColor(InputManager.readEyeColor());
-        else
-            person.setEyeColor(InputManager.readEyeColorScript(reader));
-
-        // Nationality
-        if (key == 0)
-            person.setNationality(InputManager.readNationality());
-        else
-            person.setNationality(InputManager.readNationalityScript(reader));
-
-        // Location
-        if (key == 0)
-            person.setLocation(InputManager.readLocation());
-        else
-            person.setLocation(InputManager.readLocationScript(reader));
+        id++;
 
         collection.add(person);
+        defaultSort();
         System.out.println(ANSI_GREEN + "Person was added successfully!\n" + ANSI_RESET);
     }
 
-    public void updateId(int key, int id) throws IOException {
-        int is_exist = 0;
+    public void addIfMin(Person person) {
+        person.setId(id);
+        id += 1;
 
+        collection.add(person);
+        defaultSort();
+
+        if (person != collection.peekFirst()) {
+            collection.remove(person);
+            System.out.println(ANSI_RED + "\nYour element value is bigger or the same " +
+                    "than min element in collection" + ANSI_RESET);
+            System.out.println(ANSI_RED + "Element will not be recorded.\n" + ANSI_RESET);
+        }
+        else {
+            System.out.println(ANSI_GREEN + "\nElement was recorded successfully!\n" + ANSI_RESET);
+        }
+    }
+
+    public void updateId(Person person) {
         if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
             return;
         }
 
-        for (Person person : collection) {
-            if (person.getId() == id) {
-                // Name
-                if (key == 0)
-                    person.setName(InputManager.readName());
-                else
-                    person.setName(InputManager.readNameScript(reader));
-
-                // Coordinates
-                if (key == 0)
-                    person.setCoordinates(InputManager.readCoordinates());
-                else
-                    person.setCoordinates(InputManager.readCoordinatesScript(reader));
-
-                // CreationDate
-                person.setCreationDate(ZonedDateTime.now());
-
-                // Height
-                if (key == 0)
-                    person.setHeight(InputManager.readHeight());
-                else
-                    person.setHeight(InputManager.readHeightScript(reader));
-
-                // Weight
-                if (key == 0)
-                    person.setWeight(InputManager.readWeight());
-                else
-                    person.setWeight(InputManager.readWeightScript(reader));
-
-                // Eye color
-                if (key == 0)
-                    person.setEyeColor(InputManager.readEyeColor());
-                else
-                    person.setEyeColor(InputManager.readEyeColorScript(reader));
-
-                // Nationality
-                if (key == 0)
-                    person.setNationality(InputManager.readNationality());
-                else
-                    person.setNationality(InputManager.readNationalityScript(reader));
-
-                // Location
-                if (key == 0)
-                    person.setLocation(InputManager.readLocation());
-                else
-                    person.setLocation(InputManager.readLocationScript(reader));
-
-                is_exist = 1;
+        Person to_remove = null;
+        for (Person tmp:collection){
+            if (tmp.getId() == person.getId()){
+                to_remove = tmp;
                 break;
             }
         }
-        if (is_exist == 0) {
-            System.out.println(ANSI_RED + "\nPerson with given id value doesn't exist!" + ANSI_RESET);
-            System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
-        } else
-            System.out.println(ANSI_GREEN + "\nPerson with id = " + id + " was successfully updated!\n");
+        collection.remove(to_remove);
+        collection.add(person);
+
+        defaultSort();
+        System.out.println(ANSI_GREEN + "\nPerson with id = " + person.getId() + " was successfully updated!\n");
     }
 
     public void removeById(int id) {
@@ -257,8 +194,10 @@ public class CollectionManager {
         if (is_exist == 0) {
             System.out.println(ANSI_RED + "\nPerson with given id value doesn't exist!" + ANSI_RESET);
             System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
-        } else
+        } else {
+            defaultSort();
             System.out.println(ANSI_GREEN + "\nPerson with id = " + id + " was successfully removed!\n" + ANSI_RESET);
+        }
     }
 
     public void clear() {
@@ -317,6 +256,7 @@ public class CollectionManager {
                     + ANSI_RESET + "\n");
             System.out.println(ANSI_GREEN + "A new empty collection has been created.\n" + ANSI_RESET);
             tmp = new Collection();
+            tmp.setInit_date(ZonedDateTime.now());
             collection = tmp.getCollection();
             return;
         }
@@ -333,6 +273,19 @@ public class CollectionManager {
         System.out.println("\nChecking loaded collection data...\n");
         checkId();
         setNextId();
+        defaultSort();
+    }
+
+    private void defaultSort(){
+        List<Person> tmp = new ArrayList<>(collection);
+        Collections.sort(tmp, new DefaultComparator());
+        collection = new ArrayDeque<>(tmp);
+    }
+
+    private void sortByHeight(){
+        List<Person> tmp = new ArrayList<>(collection);
+        Collections.sort(tmp, new HeightComparator());
+        collection = new ArrayDeque<>(tmp);
     }
 
     private void checkId(){
@@ -365,68 +318,87 @@ public class CollectionManager {
         id = max + 1;
     }
 
-    public void executeScript(String file_path){
-        System.out.println(ANSI_GREEN + "\nExecuting user script:" + ANSI_RESET);
-        if (file_path == null)
+    public void head(){
+        if (collection.size() == 0) {
+            System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
             return;
-
-        File file = new File(file_path);
-        int line = 1;
-
-        try (FileReader fileReader = new FileReader(file);
-              BufferedReader reader = new BufferedReader(fileReader)){
-
-            this.reader = reader;
-            String input;
-            int is_correct = 1;
-
-            while ((input = reader.readLine()) != null){
-                String[] values = input.split(" ");
-
-                if (values[0].equals("exit"))
-                    break;
-                if (values[0].equals("execute_script")){
-                    System.out.println(ANSI_RED + "Command \"execute_script\" doesn't supported in current mode. " +
-                            "(Command skipped)" + ANSI_RESET);
-                    continue;
-                }
-
-                Command command = CommandFactory.getCommand(values[0]);
-
-                if (command == null) {
-                    System.out.println(ANSI_RED + "Line: " + line + ANSI_RESET);
-                    System.out.println(ANSI_RED + "Wrong command.\n" + ANSI_RESET);
-                    return;
-                }
-
-                if (CommandFactory.getCommandsWithArgs().contains(values[0])){
-                    if (values.length < 2) {
-                        System.out.println(ANSI_RED + "You should input argument to this command. (Command skipped)\n"
-                                + ANSI_RESET);
-                        return;
-                    }
-
-                    CommandWithArg tmp = (CommandWithArg) command;
-                    tmp.setArg(values[1]);
-                }
-                Script tmp = (Script) command;
-                System.out.println("\nCommand \"" + values[0] + " \"executing...\n");
-
-                try {
-                    tmp.executeFromScript();
-                }
-                catch (Exception e){
-                    System.out.println(ANSI_RED + "Wrong data in script. Process will be terminated.\n" + ANSI_RESET);
-                    is_correct = 0;
-                    break;
-                }
-                line++;
-            }
-            if (is_correct != 0)
-                System.out.println(ANSI_GREEN + "\nScript was successfully executed.\n" + ANSI_RESET);
-
-        } catch (IOException e){
-            System.out.println(ANSI_RED + "Wrong data in script" + ANSI_RESET);
         }
+        showPerson(collection.peekFirst());
+    }
+
+    public void removeGreater(Person person) throws IOException{
+        if (collection.size() == 0) {
+            System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
+            return;
+        }
+        person.setId(id);
+        id += 1;
+
+        collection.add(person);
+        defaultSort();
+
+        boolean should_delete = false;
+
+        List<Person> to_delete = new ArrayList<>();
+        for (Person tmp : collection){
+            if (tmp == person)
+                should_delete = true;
+            if (should_delete)
+                to_delete.add(tmp);
+        }
+        for (Person tmp:to_delete)
+            collection.remove(tmp);
+
+        System.out.println(ANSI_GREEN + "\nPersons have been successfully removed!\n" + ANSI_RESET);
+    }
+
+    public void removeAllByNationality(Country nationality){
+        if (collection.size() == 0) {
+            System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
+            return;
+        }
+
+        List<Person> to_delete = new ArrayList<>();
+        for (Person tmp : collection){
+            if (tmp.getNationality().equals(nationality))
+                to_delete.add(tmp);
+        }
+        for (Person tmp:to_delete)
+            collection.remove(tmp);
+
+        System.out.println(ANSI_GREEN + "\nPersons have been successfully removed!\n" + ANSI_RESET);
+    }
+
+    public void filterByNationality(Country nationality){
+        if (collection.size() == 0) {
+            System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
+            return;
+        }
+
+        for (Person person:collection){
+            if (person.getNationality().equals(nationality))
+                showPerson(person);
+        }
+    }
+
+    public void printFieldDescendingHeight(){
+        if (collection.size() == 0) {
+            System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
+            return;
+        }
+        sortByHeight();
+        System.out.println();
+        for (Person person:collection){
+            System.out.println("id \"" + person.getId() + "\", height = " + person.getHeight());
+        }
+        System.out.println();
+    }
+
+    public boolean isIdExist(int id){
+        for (Person person:collection){
+            if (person.getId() == id)
+                return true;
+        }
+        return false;
     }
 }

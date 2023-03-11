@@ -1,8 +1,9 @@
 package managers;
 
-import Factories.CommandFactory;
-import Interfaces.Command;
-import Interfaces.CommandWithArg;
+import factories.CommandFactory;
+import interfaces.AssemblableCommand;
+import interfaces.Command;
+import interfaces.CommandWithArg;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class ClientManager {
                 if (command == null)
                     throw new NullPointerException();
 
-                if (CommandFactory.getCommandsWithArgs().contains(values[0])){
+                if (command instanceof CommandWithArg){
                     if (values.length < 2)
                         throw new IOException();
 
@@ -64,10 +65,15 @@ public class ClientManager {
                     tmp.setArg(values[1]);
                 }
 
+                if (command instanceof AssemblableCommand) {
+                    AssemblableCommand tmp = (AssemblableCommand) command;
+                    tmp.buildObject();
+                }
+
                 command.execute();
             }
             catch (NullPointerException e){
-                System.out.println(ANSI_RED + "\nWrong command!" + ANSI_RESET);
+                System.out.println(ANSI_RED + "\nWrong script data!" + ANSI_RESET);
                 System.out.println(ANSI_RED + "Try again (type \"help\" - to get reference)\n" + ANSI_RESET);
             }
             catch (IOException e){
@@ -75,10 +81,9 @@ public class ClientManager {
                 System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
             }
             catch (InputMismatchException e){
-                System.out.println(ANSI_RED + "\nWrong input." + ANSI_RESET);
+                System.out.println(ANSI_RED + "\nWrong data." + ANSI_RESET);
                 System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
             }
-
         }
     }
 }

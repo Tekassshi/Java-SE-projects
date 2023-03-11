@@ -6,6 +6,7 @@ import data.Country;
 import data.Location;
 
 import java.io.*;
+import java.util.InputMismatchException;
 
 public class InputManager {
     private static final String ANSI_GREEN = "\u001B[32m";
@@ -14,7 +15,6 @@ public class InputManager {
 
     static InputStreamReader isr = new InputStreamReader(System.in);
     static BufferedReader reader = new BufferedReader(isr);
-    static int mode = 0;
 
     public static String readName(){
         while (true){
@@ -35,12 +35,12 @@ public class InputManager {
         }
     }
 
-    public static String readNameScript(BufferedReader reader) throws IOException {
+    public static String readNameScript(BufferedReader reader) throws IOException, InputMismatchException {
         String name;
         name = reader.readLine();
 
         if (!isWord(name) || name.length() == 0)
-            throw new IOException();
+            throw new InputMismatchException();
         return name;
     }
 
@@ -185,8 +185,34 @@ public class InputManager {
         }
     }
 
+    public static String readNationality(String nationality){
+        int f = 0;
+
+        while (true){
+            try {
+                if (f == 1) {
+                    System.out.print("Enter person nationality (RUSSIA, FRANCE, THAILAND, NORTH_KOREA): ");
+                    nationality = reader.readLine().toUpperCase();
+                }
+                Country tmp = Country.valueOf(nationality.toUpperCase());
+                return nationality.toUpperCase();
+            }
+            catch (IOException | IllegalArgumentException | NullPointerException e){
+                System.out.println(ANSI_RED + "\nWrong nationality value!\n(you can choose one of the values " +
+                        "RUSSIA, FRANCE, THAILAND, NORTH_KOREA)" + ANSI_RESET);
+                System.out.println(ANSI_RED + "Try again.\n" + ANSI_RESET);
+                f = 1;
+            }
+        }
+    }
+
     public static Country readNationalityScript(BufferedReader reader) throws IOException {
         Country nationality = Country.valueOf(reader.readLine().toUpperCase());
+        return nationality;
+    }
+
+    public static Country readNationalityScript(String nat) throws IOException {
+        Country nationality = Country.valueOf(nat.toUpperCase());
         return nationality;
     }
 

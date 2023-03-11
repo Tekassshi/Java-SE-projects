@@ -1,26 +1,20 @@
-package Factories;
+package factories;
 
-import Interfaces.Command;
+import interfaces.Command;
 import commands.*;
+import commands.Head;
 import managers.CollectionManager;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class CommandFactory {
     private static CollectionManager collectionManager;
 
     static Map<String, Command> commands = new HashMap<>();
-    static Set<String> commands_with_args = new HashSet<>();
 
     public static Command getCommand(String value){
         return commands.getOrDefault(value, null);
-    }
-
-    public static Set<String> getCommandsWithArgs() {
-        return commands_with_args;
     }
 
     public static void setCollectionManager(CollectionManager collectionManager) {
@@ -37,10 +31,11 @@ public class CommandFactory {
         commands.put("clear", new Clear(collectionManager));
         commands.put("save", new Save(collectionManager));
         commands.put("execute_script", new ExecuteScript(collectionManager));
-
-        // Filling commands list with arguments
-        commands_with_args.add("update");
-        commands_with_args.add("remove_by_id");
-        commands_with_args.add("execute_script");
+        commands.put("head", new Head(collectionManager));
+        commands.put("add_if_min", new AddIfMin(collectionManager));
+        commands.put("remove_greater", new RemoveGreater(collectionManager));
+        commands.put("remove_all_by_nationality", new RemoveAllByNationality(collectionManager));
+        commands.put("filter_by_nationality", new FilterByNationality(collectionManager));
+        commands.put("print_field_descending_height", new PrintFieldDescendingHeight(collectionManager));
     }
 }

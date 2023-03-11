@@ -10,14 +10,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 
-public class Add extends AbstractCommand implements Command, AssemblableCommand {
-    public Add(CollectionManager collectionManager) {
+public class RemoveGreater extends AbstractCommand implements Command, AssemblableCommand {
+    public RemoveGreater(CollectionManager collectionManager) {
         super(collectionManager);
     }
 
     @Override
     public void buildObject() {
-        System.out.println("\n--- Adding a new person to collection ---\n");
+        System.out.println("\n--- A person to compare ---\n");
 
         Person person = new Person();
 
@@ -51,6 +51,6 @@ public class Add extends AbstractCommand implements Command, AssemblableCommand 
 
     @Override
     public void execute() throws IOException {
-        super.getCollectionManager().add((Person) super.getObject());
+        super.getCollectionManager().removeGreater((Person) super.getObject());
     }
 }

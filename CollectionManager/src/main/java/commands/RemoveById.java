@@ -1,19 +1,12 @@
 package commands;
 
-import Interfaces.CommandWithArg;
+import interfaces.CommandWithArg;
 import managers.CollectionManager;
 import managers.InputManager;
-
-import java.io.IOException;
 
 public class RemoveById extends AbstractCommand implements CommandWithArg {
     public RemoveById(CollectionManager collectionManager) {
         super(collectionManager);
-    }
-
-    @Override
-    public void execute() {
-        super.getCollectionManager().removeById(Integer.parseInt(super.getArgument()));
     }
 
     @Override
@@ -22,7 +15,7 @@ public class RemoveById extends AbstractCommand implements CommandWithArg {
     }
 
     @Override
-    public void executeFromScript() throws IOException {
+    public void execute() {
         super.getCollectionManager().removeById(Integer.parseInt(super.getArgument()));
     }
 }
