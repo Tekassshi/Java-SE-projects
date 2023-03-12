@@ -3,10 +3,15 @@ package commands;
 import interfaces.Command;
 import managers.CollectionManager;
 
-import java.io.IOException;
-
+/**
+ * Class for "help" command. Command outputs reference for all available commands.
+ * */
 public class Help extends AbstractCommand implements Command {
 
+    /**
+     * Main constructor that using parent AbstractCommand constructor.
+     * @see AbstractCommand
+     * */
     public Help(CollectionManager collectionManager) {
         super(collectionManager);
     }

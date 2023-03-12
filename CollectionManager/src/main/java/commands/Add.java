@@ -10,7 +10,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 
+/**
+ * Class for "add" command. Command adding new person to collection.
+ * */
 public class Add extends AbstractCommand implements Command, AssemblableCommand {
+
+    /**
+     * Main constructor that using parent AbstractCommand constructor.
+     * @see AbstractCommand
+     * */
     public Add(CollectionManager collectionManager) {
         super(collectionManager);
     }
@@ -49,6 +57,11 @@ public class Add extends AbstractCommand implements Command, AssemblableCommand 
         super.setObject(person);
     }
 
+    /**
+     * Method to executing current command using CollectionManager object and Person built object.
+     * @see CollectionManager
+     * @see Person
+     * */
     @Override
     public void execute() throws IOException {
         super.getCollectionManager().add((Person) super.getObject());

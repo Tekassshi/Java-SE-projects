@@ -1,18 +1,23 @@
 package commands;
 
 import interfaces.Command;
-import commands.AbstractCommand;
 import managers.CollectionManager;
 
-import java.io.IOException;
-
+/**
+ * Class for "head" command. Command outputs first element of current collection.
+ * */
 public class Head extends AbstractCommand implements Command {
+
+    /**
+     * Main constructor that using parent AbstractCommand constructor.
+     * @see AbstractCommand
+     * */
     public Head(CollectionManager collectionManager) {
         super(collectionManager);
     }
 
     @Override
-    public void execute() throws IOException {
+    public void execute() {
         super.getCollectionManager().head();
     }
 }

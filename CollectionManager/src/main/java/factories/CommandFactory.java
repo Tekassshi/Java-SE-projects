@@ -8,15 +8,30 @@ import managers.CollectionManager;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Factory class, that contains and returns objects of all available commands objects.
+ * */
 public class CommandFactory {
+    /**
+     * HashMap which contains name of command as key and object of that command as value.
+     * */
     static Map<String, Command> commands = new HashMap<>();
 
+    /**
+     * @param value name of command to get.
+     * @return class object that implements "Command" interface and matches given key.
+     * @see Command
+     * */
     public static Command getCommand(String value){
         return commands.getOrDefault(value, null);
     }
 
+    /**
+     * Setter method that setting "CollectionManager" object for all commands
+     * @param collectionManager "CollectionManager" class object.
+     * @see CollectionManager
+     * */
     public static void setCollectionManager(CollectionManager collectionManager) {
-
         // Loading commands classes to general commands map
         commands.put("help", new Help(collectionManager));
         commands.put("info", new Info(collectionManager));

@@ -10,11 +10,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.InputMismatchException;
 
+/**
+ * Class that contains one method "run()", which is responsible for manage user input.
+ * */
 public class ClientManager {
     private final String GREEN_BOLD = "\033[1;32m";
     private final String ANSI_RED = "\u001B[31m";
     private final String ANSI_RESET = "\u001B[0m";
 
+    /**
+     * Main method for assemble commands from user input stream and call their execution.
+     * @throws IOException when has error with input stream.
+     * */
     public void run() throws IOException {
         System.out.println(GREEN_BOLD + "\n--- Welcome to collection manager! ---\n" + ANSI_RESET);
         System.out.println("(type \"help\" - to get reference, \"exit\" - to terminate)\n");

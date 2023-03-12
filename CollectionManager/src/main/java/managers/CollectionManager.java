@@ -16,16 +16,20 @@ import java.io.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+/** Class which contains current many fields for working with current collection. It also contains
+ * all methods for executing user commands.
+ * @see UserCollection
+ * @see ClientManager
+ * */
 public class CollectionManager {
     private Deque<Person> collection = new ArrayDeque<>();
     private UserCollection collection_wrapper;
     private String collection_path;
     private boolean is_path_exist = false;
+
 
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -33,6 +37,9 @@ public class CollectionManager {
 
     private Long id = Long.valueOf(1);
 
+    /**
+     * Method for checking environmental variable to get path for collection and set it to class field.
+     * */
     public void getCollectionPath(){
         String path = System.getenv("Lab5_collection");
         File out_file;
@@ -59,6 +66,10 @@ public class CollectionManager {
                 + collection_path + "\"\n" + ANSI_RESET);
     }
 
+    /**
+     * Method for executing "help" user command.
+     * @see commands.Help
+     * */
     public void help() {
         StringBuilder s = new StringBuilder(
                 "\"help\" - вывести справку по доступным командам\n" +
@@ -89,6 +100,10 @@ public class CollectionManager {
         System.out.println(s);
     }
 
+    /**
+     * Method for executing "show" user command.
+     * @see commands.Show
+     * */
     public void show() {
         if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
@@ -114,6 +129,10 @@ public class CollectionManager {
         }
     }
 
+    /**
+     * Method is used to output given "Person" object to stream.
+     * @see Person
+     * */
     public void showPerson(Person person){
         System.out.println("\nPerson\n");
         System.out.println("Id: " + person.getId());
@@ -130,7 +149,12 @@ public class CollectionManager {
         System.out.println("");
     }
 
-    public void add(Person person) throws IOException {
+    /**
+     * Method for executing "add" user command.
+     * @see commands.Add
+     * @param person "Person" class object to add to current collection.
+     * */
+    public void add(Person person) {
         person.setId(id);
         id++;
 
@@ -139,6 +163,11 @@ public class CollectionManager {
         System.out.println(ANSI_GREEN + "Person was added successfully!\n" + ANSI_RESET);
     }
 
+    /**
+     * Method for executing "add_if_min" user command.
+     * @see commands.AddIfMin
+     * @param person "Person" class object to add to current collection.
+     * */
     public void addIfMin(Person person) {
         person.setId(id);
         id += 1;
@@ -157,6 +186,11 @@ public class CollectionManager {
         }
     }
 
+    /**
+     * Method for executing "update" user command.
+     * @see commands.UpdateId
+     * @param person "Person" class object for updating in node with same "id" field in current collection.
+     * */
     public void updateId(Person person) {
         if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
@@ -177,6 +211,11 @@ public class CollectionManager {
         System.out.println(ANSI_GREEN + "\nPerson with id = " + person.getId() + " was successfully updated!\n");
     }
 
+    /**
+     * Method for executing "remove_by_id" user command.
+     * @see commands.RemoveById
+     * @param id node "id" field value that we should remove from current collection.
+     * */
     public void removeById(int id) {
         int is_exist = 0;
 
@@ -201,6 +240,10 @@ public class CollectionManager {
         }
     }
 
+    /**
+     * Method for executing "clear" user command.
+     * @see commands.Clear
+     * */
     public void clear() {
         if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
@@ -212,6 +255,10 @@ public class CollectionManager {
         System.out.println(ANSI_GREEN + "\nCollection was successfully cleared.\n" + ANSI_RESET);
     }
 
+    /**
+     * Method for executing "save" user command.
+     * @see commands.Save
+     * */
     public void save() {
 
         try (FileOutputStream fos = new FileOutputStream(collection_path);
@@ -233,6 +280,9 @@ public class CollectionManager {
         }
     }
 
+    /**
+     * Method for loading collection from XML file.
+     * */
     public void load() {
         if (!is_path_exist)
             return;
@@ -276,18 +326,30 @@ public class CollectionManager {
         defaultSort();
     }
 
+    /**
+     * Method for sorting current collection using "DefaultComparator" comparator class.
+     * @see DefaultComparator
+     * */
     private void defaultSort(){
         List<Person> tmp = new ArrayList<>(collection);
         Collections.sort(tmp, new DefaultComparator());
         collection = new ArrayDeque<>(tmp);
     }
 
+    /**
+     * Method for sorting current collection using "HeightComparator" comparator class.
+     * @see HeightComparator
+     * */
     private void sortByHeight(){
         List<Person> tmp = new ArrayList<>(collection);
         Collections.sort(tmp, new HeightComparator());
         collection = new ArrayDeque<>(tmp);
     }
 
+    /**
+     * Method for same "id" field existence check. Removes nodes from current collection that have an already
+     * existing "id" field value.
+     * */
     private void checkId(){
         Map<Long, Integer> map = new HashMap<>();
         Long max = Long.valueOf(0);
@@ -309,6 +371,9 @@ public class CollectionManager {
             collection.remove(person);
     }
 
+    /**
+     * Method count a number of nodes in current collection and set "id" value that should be set for new next node.
+     * */
     private void setNextId(){
         Long max = Long.valueOf(0);
 
@@ -318,6 +383,10 @@ public class CollectionManager {
         id = max + 1;
     }
 
+    /**
+     * Method for executing "head" user command.
+     * @see commands.Head
+     * */
     public void head(){
         if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
@@ -326,7 +395,12 @@ public class CollectionManager {
         showPerson(collection.peekFirst());
     }
 
-    public void removeGreater(Person person) throws IOException{
+    /**
+     * Method for executing "remove_greater" user command.
+     * @see commands.RemoveGreater
+     * @param person "Person" class object after which we should remove all nodes.
+     * */
+    public void removeGreater(Person person) {
         if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
             return;
@@ -352,6 +426,11 @@ public class CollectionManager {
         System.out.println(ANSI_GREEN + "\nPersons have been successfully removed!\n" + ANSI_RESET);
     }
 
+    /**
+     * Method for executing "remove_all_by_nationality" user command.
+     * @see commands.RemoveAllByNationality
+     * @param nationality "Country" class object with which we should remove all nodes in current collection.
+     * */
     public void removeAllByNationality(Country nationality){
         if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
@@ -369,6 +448,11 @@ public class CollectionManager {
         System.out.println(ANSI_GREEN + "\nPersons have been successfully removed!\n" + ANSI_RESET);
     }
 
+    /**
+     * Method for executing "filter_by_nationality" user command.
+     * @see commands.FilterByNationality
+     * @param nationality "Country" class object with which we should output all nodes in current collection.
+     * */
     public void filterByNationality(Country nationality){
         if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
@@ -381,6 +465,10 @@ public class CollectionManager {
         }
     }
 
+    /**
+     * Method for executing "print_field_descending_height" user command.
+     * @see commands.PrintFieldDescendingHeight
+     * */
     public void printFieldDescendingHeight(){
         if (collection.size() == 0) {
             System.out.println(ANSI_RED + "\nCollection is empty!\n" + ANSI_RESET);
@@ -394,6 +482,9 @@ public class CollectionManager {
         System.out.println();
     }
 
+    /** Utility method for checking given id on existence in current collection.
+     * @param id "id" field value to checking.
+     * */
     public boolean isIdExist(int id){
         for (Person person:collection){
             if (person.getId() == id)
@@ -402,6 +493,10 @@ public class CollectionManager {
         return false;
     }
 
+    /**
+     * Method for executing "info" user command.
+     * @see commands.Info
+     * */
     public void info(){
         System.out.println(ANSI_GREEN + "\n--- Collection info ---" + ANSI_RESET);
         System.out.println("Date of initialization: " + collection_wrapper.getInit_date());

@@ -4,6 +4,10 @@ import data.Person;
 
 import java.util.Comparator;
 
+/**
+ * Comparator class for compare Person objects by Person.height field value in ascending order.
+ * @see Person
+ * */
 public class HeightComparator implements Comparator<Person> {
 
     @Override

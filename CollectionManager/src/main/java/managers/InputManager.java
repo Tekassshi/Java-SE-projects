@@ -8,6 +8,9 @@ import data.Location;
 import java.io.*;
 import java.util.InputMismatchException;
 
+/**
+ * Class that contains only static methods to validate user input.
+ * */
 public class InputManager {
     private static final String ANSI_GREEN = "\u001B[32m";
     private static final String ANSI_RED = "\u001B[31m";
@@ -16,6 +19,10 @@ public class InputManager {
     static InputStreamReader isr = new InputStreamReader(System.in);
     static BufferedReader reader = new BufferedReader(isr);
 
+    /**
+     * Utility method for reading "name" field value from default input stream.
+     * @return valid "name" field String value.
+     * */
     public static String readName(){
         while (true){
             try {
@@ -35,6 +42,12 @@ public class InputManager {
         }
     }
 
+    /**
+     * Utility method for reading "name" field value from given input stream.
+     * @return valid "name" field String value.
+     * @throws IOException if given stream contains incorrect data
+     * @throws InputMismatchException if given stream contains incorrect data
+     * */
     public static String readNameScript(BufferedReader reader) throws IOException, InputMismatchException {
         String name;
         name = reader.readLine();
@@ -44,6 +57,11 @@ public class InputManager {
         return name;
     }
 
+    /**
+     * Utility method for checking input String for containing only letters.
+     * @param word String that we should to check.
+     * @return boolean result of checking.
+     * */
     public static boolean isWord(String word){
         for (int i = 0; i < word.length(); i++){
             if (!Character.isLetter(word.charAt(i)))
@@ -52,6 +70,10 @@ public class InputManager {
         return true;
     }
 
+    /**
+     * Utility method for reading "coordinates" field value from default input stream.
+     * @return valid "coordinates" field "Coordinates" value.
+     * */
     public static Coordinates readCoordinates(){
         Coordinates coordinates = new Coordinates();
 
@@ -78,6 +100,12 @@ public class InputManager {
         }
     }
 
+    /**
+     * Utility method for reading "coordinates" field value from given input stream.
+     * @return valid "coordinates" field "Coordinates" value.
+     * @throws IOException if given stream contains incorrect data
+     * @throws NumberFormatException if given stream contains incorrect data
+     * */
     public static Coordinates readCoordinatesScript(BufferedReader reader) throws IOException, NumberFormatException {
         Coordinates coordinates = new Coordinates();
 
@@ -92,6 +120,10 @@ public class InputManager {
         return coordinates;
     }
 
+    /**
+     * Utility method for reading "height" field value from default input stream.
+     * @return valid "height" field Integer value.
+     * */
     public static Integer readHeight(){
         while (true){
             try {
@@ -111,6 +143,11 @@ public class InputManager {
         }
     }
 
+    /**
+     * Utility method for reading "height" field value from given input stream.
+     * @return valid "height" field "Integer" value.
+     * @throws IOException if given stream contains incorrect data
+     * */
     public static Integer readHeightScript(BufferedReader reader) throws IOException {
         Integer height = Integer.parseInt(reader.readLine());
         if (height <= 0)
@@ -118,6 +155,10 @@ public class InputManager {
         return height;
     }
 
+    /**
+     * Utility method for reading "weight" field value from default input stream.
+     * @return valid "weight" field Float value.
+     * */
     public static Float readWeight(){
         while (true){
             try {
@@ -138,6 +179,11 @@ public class InputManager {
         }
     }
 
+    /**
+     * Utility method for reading "weight" field value from given input stream.
+     * @return valid "weight" field "Float" value.
+     * @throws IOException if given stream contains incorrect data
+     * */
     public static Float readWeightScript(BufferedReader reader) throws IOException {
         Float weight = Float.parseFloat(reader.readLine().replaceAll(",", "."));
 
@@ -147,6 +193,10 @@ public class InputManager {
         return weight;
     }
 
+    /**
+     * Utility method for reading "eyeColor" field value from default input stream.
+     * @return valid "eyeColor" field, Color enum value.
+     * */
     public static Color readEyeColor(){
         while (true){
             try {
@@ -163,12 +213,21 @@ public class InputManager {
         }
     }
 
+    /**
+     * Utility method for reading "eyeColor" field value from given input stream.
+     * @return valid "eyeColor" field "Color" value.
+     * @throws IOException if given stream contains incorrect data
+     * */
     public static Color readEyeColorScript(BufferedReader reader) throws IOException {
         Color eye_color = Color.valueOf(reader.readLine().toUpperCase());
 
         return eye_color;
     }
 
+    /**
+     * Utility method for reading "nationality" field value from default input stream.
+     * @return valid "nationality" field Country class value.
+     * */
     public static Country readNationality(){
         while (true){
             try {
@@ -185,6 +244,11 @@ public class InputManager {
         }
     }
 
+    /**
+     * Utility method for reading "nationality" field using input source.
+     * @param nationality value that we should to validate.
+     * @return valid "nationality" field in String representation.
+     * */
     public static String readNationality(String nationality){
         int f = 0;
 
@@ -206,16 +270,20 @@ public class InputManager {
         }
     }
 
+    /**
+     * Utility method for reading "nationality" field value from given input stream.
+     * @return valid "nationality" field "Country" value.
+     * @throws IOException if given stream contains incorrect data
+     * */
     public static Country readNationalityScript(BufferedReader reader) throws IOException {
         Country nationality = Country.valueOf(reader.readLine().toUpperCase());
         return nationality;
     }
 
-    public static Country readNationalityScript(String nat) throws IOException {
-        Country nationality = Country.valueOf(nat.toUpperCase());
-        return nationality;
-    }
-
+    /**
+     * Utility method for reading "location" field value from default input stream.
+     * @return valid "location" field, Location class object.
+     * */
     public static Location readLocation(){
         Location location = new Location();
 
@@ -245,6 +313,11 @@ public class InputManager {
         }
     }
 
+    /**
+     * Utility method for reading "location" field value from given input stream.
+     * @return valid "location" field "Location" value.
+     * @throws IOException if given stream contains incorrect data
+     * */
     public static Location readLocationScript(BufferedReader reader) throws IOException {
         Location location = new Location();
 
@@ -259,6 +332,11 @@ public class InputManager {
         return location;
     }
 
+    /**
+     * Utility method for reading "id" field value from given String value.
+     * @param id value that we should to validate.
+     * @return valid "id" field in String representation.
+     * */
     public static String readId(String id){
         int out = 0;
         int f = 0;
@@ -284,6 +362,11 @@ public class InputManager {
         }
     }
 
+    /**
+     * Utility method for validating file on given file path.
+     * @param file_name file_path that we should to validate.
+     * @return valid file path value.
+     * */
     public static String readFile(String file_name) {
         String file_dir = System.getProperty("user.dir") + "\\src\\main\\resources\\";
         String file_path = file_dir + file_name;

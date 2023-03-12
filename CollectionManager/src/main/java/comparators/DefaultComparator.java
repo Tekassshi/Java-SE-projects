@@ -4,6 +4,11 @@ import data.Person;
 
 import java.util.Comparator;
 
+/**
+ * Comparator class for compare Person objects by 4 fields by priority (1 - Person.name, 2 - Person.creationDate,
+ * 3 - Person.height, 4 - Person.weight) in ascending order.
+ * @see Person
+ * */
 public class DefaultComparator implements Comparator<Person> {
     @Override
     public int compare(Person p1, Person p2) {

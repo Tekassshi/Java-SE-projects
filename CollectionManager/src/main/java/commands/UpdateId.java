@@ -10,13 +10,25 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 
+/**
+ * Class for "update" command. Updates all person fields from collection with given "id" value.
+ * */
 public class UpdateId extends AbstractCommand implements CommandWithArg, AssemblableCommand {
 
     private boolean is_updatable = true;
+
+    /**
+     * Main constructor that using parent AbstractCommand constructor.
+     * @see AbstractCommand
+     * */
     public UpdateId(CollectionManager collectionManager) {
         super(collectionManager);
     }
 
+    /**
+     * CommandWithArg interface setter method for setting String value of argument for command executing.
+     * @param arg person "id" value in String representation.
+     * */
     @Override
     public void setArg(String arg) {
         super.setArgument(InputManager.readId(arg));
@@ -66,7 +78,7 @@ public class UpdateId extends AbstractCommand implements CommandWithArg, Assembl
     }
 
     @Override
-    public void execute() throws IOException {
+    public void execute() {
         if (is_updatable)
             super.getCollectionManager().updateId((Person) super.getObject());
     }

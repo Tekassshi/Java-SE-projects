@@ -10,13 +10,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 
+/**
+ * Class for "add_if_min" command. Command adding new person to collection if it's lower than current
+ * min object in collection.
+ * */
 public class AddIfMin extends AbstractCommand implements Command, AssemblableCommand {
+
+    /**
+     * Main constructor that using parent AbstractCommand constructor.
+     * @see AbstractCommand
+     * */
     public AddIfMin(CollectionManager collectionManager) {
         super(collectionManager);
     }
 
     @Override
-    public void execute() throws IOException {
+    public void execute() {
         super.getCollectionManager().addIfMin((Person) super.getObject());
     }
 

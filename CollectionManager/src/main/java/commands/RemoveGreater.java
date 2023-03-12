@@ -10,7 +10,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 
+/**
+ * Class for "remove_greater" command. Command removes all persons whose position in collection
+ * is greater than given person.
+ * */
 public class RemoveGreater extends AbstractCommand implements Command, AssemblableCommand {
+
+    /**
+     * Main constructor that using parent AbstractCommand constructor.
+     * @see AbstractCommand
+     * */
     public RemoveGreater(CollectionManager collectionManager) {
         super(collectionManager);
     }
@@ -49,8 +58,9 @@ public class RemoveGreater extends AbstractCommand implements Command, Assemblab
         super.setObject(person);
     }
 
+
     @Override
-    public void execute() throws IOException {
+    public void execute() {
         super.getCollectionManager().removeGreater((Person) super.getObject());
     }
 }
