@@ -9,22 +9,23 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-import data.Collection;
 import data.Person;
+import data.UserCollection;
 
 import java.io.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.*;
 
 public class CollectionManager {
     private Deque<Person> collection = new ArrayDeque<>();
+    private UserCollection collection_wrapper;
     private String collection_path;
     private boolean is_path_exist = false;
-    private BufferedReader reader;
 
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RED = "\u001B[31m";
@@ -219,15 +220,10 @@ public class CollectionManager {
             XmlMapper mapper = new XmlMapper();
             mapper.registerModule(new JavaTimeModule());
 
-            SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-            mapper.setDateFormat(df);
-
             mapper.getFactory().disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-            Collection collection_wrapper = new Collection();
             collection_wrapper.setCollection(collection);
-
             mapper.writeValue(writer, collection_wrapper);
 
             System.out.println(ANSI_GREEN + "\nYour collection was successfully saved.\n" + ANSI_RESET);
@@ -245,30 +241,34 @@ public class CollectionManager {
         XmlMapper mapper = new XmlMapper();
         mapper.registerModule(new JavaTimeModule());
 
-        Collection tmp;
+        UserCollection tmp;
 
         try {
-            tmp = mapper.readValue(file, Collection.class);
+            tmp = mapper.readValue(file, UserCollection.class);
         }
         catch (InvalidFormatException e){
             System.out.println(ANSI_RED + "Wrong data type in \"" + collection_path + "\"." + ANSI_RESET);
             System.out.println(ANSI_RED + e.getLocation().toString().replaceAll("\\[|\\]", "")
                     + ANSI_RESET + "\n");
             System.out.println(ANSI_GREEN + "A new empty collection has been created.\n" + ANSI_RESET);
-            tmp = new Collection();
+            tmp = new UserCollection();
             tmp.setInit_date(ZonedDateTime.now());
             collection = tmp.getCollection();
+            collection_wrapper = tmp;
             return;
         }
         catch (IOException e){
             System.out.println(ANSI_RED + "Wrong XML format \"" + collection_path + "\"." + ANSI_RESET);
             System.out.println(ANSI_GREEN + "A new empty collection has been created.\n" + ANSI_RESET);
-            tmp = new Collection();
+            tmp = new UserCollection();
+            tmp.setInit_date(ZonedDateTime.now());
             collection = tmp.getCollection();
+            collection_wrapper = tmp;
             return;
         }
 
         collection = tmp.getCollection();
+        collection_wrapper = tmp;
 
         System.out.println("\nChecking loaded collection data...\n");
         checkId();
@@ -400,5 +400,12 @@ public class CollectionManager {
                 return true;
         }
         return false;
+    }
+
+    public void info(){
+        System.out.println(ANSI_GREEN + "\n--- Collection info ---" + ANSI_RESET);
+        System.out.println("Date of initialization: " + collection_wrapper.getInit_date());
+        System.out.println("Collection type: ArrayDeque<Person>");
+        System.out.println("Number of elements: " + collection.size() + "\n");
     }
 }

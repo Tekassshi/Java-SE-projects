@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CommandFactory {
-    private static CollectionManager collectionManager;
-
     static Map<String, Command> commands = new HashMap<>();
 
     public static Command getCommand(String value){
@@ -18,12 +16,10 @@ public class CommandFactory {
     }
 
     public static void setCollectionManager(CollectionManager collectionManager) {
-        CommandFactory.collectionManager = collectionManager;
 
         // Loading commands classes to general commands map
-
         commands.put("help", new Help(collectionManager));
-//      commands.put("info", new Info(collectionManager));
+        commands.put("info", new Info(collectionManager));
         commands.put("show", new Show(collectionManager));
         commands.put("add", new Add(collectionManager));
         commands.put("update", new UpdateId(collectionManager));
